@@ -1,0 +1,20 @@
+% note MMs= TTMS
+
+function dMM =DistaliseMM(MM, di)
+
+Ts=length(MM);
+
+      c = (triu(MM,di)');
+    
+    c(1:di,:)=[];
+       c(:,(Ts-(di-1)):Ts)=[];
+       
+        c = (triu(MM,di)');
+    
+    c(1:di,:)=[];
+       c(:,(Ts-(di-1)):Ts)=[];
+       
+       mask2 = tril(true(size(c)),-1);
+      dMM=(c(mask2));
+      
+end

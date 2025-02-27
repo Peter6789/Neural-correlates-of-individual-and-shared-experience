@@ -1,0 +1,85 @@
+clear
+tic
+% note MMs= TTMs
+
+addpath(genpath('/rds/project/rds-pXaBn8E6hyM/users/pc605/GTA_MATRICES'))
+NO_PERMS=10000
+
+ load('/rds/project/rds-pXaBn8E6hyM/users/pc605/proj_anaesthesia_L/TAKEN_PROPOFOL/MATS_1400/MMs_TAKEN_1400.mat', ...
+     'MM_IPS2_DorsAttnA_6Mat','MM_IPS2_DorsAttnA_8Mat', 'MM_IPS2_ContA_6Mat','MM_IPS2_ContA_8Mat',  'MM_IPS2_TempPar_6Mat','MM_IPS2_TempPar_8Mat' ...
+     , 'MM_IPS2_SomMotB_6Mat'...
+     ,'MM_IPS2_SomMotB_8Mat', 'MM_IPS2_VisPeri_6Mat','MM_IPS2_VisPeri_8Mat')
+ 
+  load('/rds/project/rds-pXaBn8E6hyM/users/pc605/proj_anaesthesia_L/TAKEN_PROPOFOL/MATS/MMs_IPS_YEO553.mat', 'MM_IPS2_SUB54_Mat')
+ %load('/home/pc605/rds/rds-uda-2-pXaBn8E6hyM/migration/scratch/pc605/proj_anaesthesia_L/TAKEN_PROPOFOL/MATS/MMs_553_Subsystems.mat', 'MM_IPS2_FPN_DMN_4_Mat', 'MM_IPS2_SUB54_Mat')
+ %imagesc(MM_AA_Cor1_Mat{1,45})
+
+ MMs={'MM_IPS2_DorsAttnA_6Mat','MM_IPS2_DorsAttnA_8Mat', 'MM_IPS2_ContA_6Mat','MM_IPS2_ContA_8Mat',  'MM_IPS2_TempPar_6Mat','MM_IPS2_TempPar_8Mat' ...
+     , 'MM_IPS2_SomMotB_6Mat'...
+     ,'MM_IPS2_SomMotB_8Mat', 'MM_IPS2_VisPeri_6Mat','MM_IPS2_VisPeri_8Mat', 'MM_IPS2_SUB54_Mat'}
+
+%MMs={'MM_IPS2_Vis_Mat'}
+ 
+
+load('/rds/project/rds-pXaBn8E6hyM/users/pc605/proj_anaesthesia_L/TAKEN_PROPOFOL/BEHAVIOURAL/Behav_MM_4IPS.mat')
+
+
+
+
+
+
+
+
+for M=1:length(MMs)
+    M
+    eval(['MMm=',MMs{M},';']);
+    for p = 1:16
+    
+      MMmean1(:,:,p)=MMm{p};
+     
+    end
+    
+   MMmean=mean(MMmean1,3);
+     
+   MMsd=std(MMmean1,[],3);
+    
+      ny =size(MMmean,2) ; 
+      
+      AA_comp_AV{M}=KendallTaua(DistaliseMM(MMmean, 10), DistaliseMM(BehavMMs_AV, 10));
+          AA_comp_SD{M}=KendallTaua(DistaliseMM(MMsd, 10), DistaliseMM(BehavMMs_SD, 10));
+          
+          
+for per = 1 : NO_PERMS
+
+
+    
+pBehavMMs_AV = DistaliseMM(BehavMMs_AV(:,(randsample(1:ny,ny))), 10);
+pBehavMMs_SD = DistaliseMM(BehavMMs_SD(:,(randsample(1:ny,ny))), 10);
+
+RS_AV(per)=KendallTaua(pBehavMMs_AV, DistaliseMM(MMmean, 10));
+RS_SD(per)=KendallTaua(pBehavMMs_SD, DistaliseMM(MMsd, 10));
+
+
+%figure; imagesc(k_shuffle)
+
+% vecREST=DistaliseMM(MEANconR, 10);
+% vecCON=DistaliseMM(MEANcon, 10);
+% vecDEEP=DistaliseMM(MEANdeep, 10);
+
+
+
+%f%igure; imagesc(k)
+
+end
+   AA_2PS_AV{1,M}=sum((RS_AV)>=(AA_comp_AV{M}))/NO_PERMS;
+
+     AA_2PS_SD{1,M}=sum((RS_SD)>=(AA_comp_SD{M}))/NO_PERMS;
+     
+        AA_2PSab_AV{1,M}=sum(abs(RS_AV)>=abs(AA_comp_AV{M}))/NO_PERMS;
+
+     AA_2PSab_SD{1,M}=sum(abs(RS_SD)>=abs(AA_comp_SD{M}))/NO_PERMS;
+     save('/rds/project/rds-pXaBn8E6hyM/users/pc605/proj_anaesthesia_L/TAKEN_PROPOFOL/MATS_1400/BEHAV_PERM_1400second_kendallTauA_wDoubleSided.mat', 'AA_*', 'MMs')
+  end
+ MMs
+save
+toc

@@ -1,0 +1,41 @@
+% note 6MAT and 8MAT refer to granularity. 
+clear
+load('/rds/project/rds-pXaBn8E6hyM/users/pc605/proj_anaesthesia_L/TAKEN_PROPOFOL/MATS_1400/DYN_MATS_REST.mat', 'IPS2_LAN_Mat','IPS2_ContA_6Mat', 'IPS2_ContB_6Mat',...
+   'IPS2_ContC_6Mat','IPS2_DefaultA_6Mat','IPS2_DefaultB_6Mat','IPS2_DefaultC_6Mat', 'IPS2_DorsAttnA_6Mat','IPS2_DorsAttnB_6Mat', ...
+   'IPS2_LimbicA_6Mat', 'IPS2_LimbicB_6Mat', 'IPS2_SalVentAttnA_6Mat',  'IPS2_SalVentAttnB_6Mat','IPS2_SomMotA_6Mat', 'IPS2_SomMotB_6Mat', ...
+   'IPS2_TempPar_6Mat','IPS2_VisCent_6Mat', 'IPS2_VisPeri_6Mat', 'IPS2_ContA_8Mat', 'IPS2_ContB_8Mat','IPS2_ContC_8Mat',...
+'IPS2_DefaultA_8Mat','IPS2_DefaultB_8Mat','IPS2_DefaultC_8Mat', 'IPS2_DorsAttnA_8Mat','IPS2_DorsAttnB_8Mat', 'IPS2_LimbicA_8Mat',...
+'IPS2_LimbicB_8Mat', 'IPS2_SalVentAttnA_8Mat',  'IPS2_SalVentAttnB_8Mat','IPS2_SomMotA_8Mat', 'IPS2_SomMotB_8Mat', 'IPS2_TempPar_8Mat',...
+'IPS2_VisCent_8Mat', 'IPS2_VisPeri_8Mat')
+
+% DATA_YEO_16_normHZ
+addpath(genpath('/rds/project/rds-pXaBn8E6hyM/users/pc605/pc605/GTA_MATRICES'))
+
+MATS ={'IPS2_LAN_Mat','IPS2_ContA_6Mat', 'IPS2_ContB_6Mat',...
+   'IPS2_ContC_6Mat','IPS2_DefaultA_6Mat','IPS2_DefaultB_6Mat','IPS2_DefaultC_6Mat', 'IPS2_DorsAttnA_6Mat','IPS2_DorsAttnB_6Mat', ...
+   'IPS2_LimbicA_6Mat', 'IPS2_LimbicB_6Mat', 'IPS2_SalVentAttnA_6Mat',  'IPS2_SalVentAttnB_6Mat','IPS2_SomMotA_6Mat', 'IPS2_SomMotB_6Mat', ...
+   'IPS2_TempPar_6Mat','IPS2_VisCent_6Mat', 'IPS2_VisPeri_6Mat', 'IPS2_ContA_8Mat', 'IPS2_ContB_8Mat','IPS2_ContC_8Mat',...
+'IPS2_DefaultA_8Mat','IPS2_DefaultB_8Mat','IPS2_DefaultC_8Mat', 'IPS2_DorsAttnA_8Mat','IPS2_DorsAttnB_8Mat', 'IPS2_LimbicA_8Mat',...
+'IPS2_LimbicB_8Mat', 'IPS2_SalVentAttnA_8Mat',  'IPS2_SalVentAttnB_8Mat','IPS2_SomMotA_8Mat', 'IPS2_SomMotB_8Mat', 'IPS2_TempPar_8Mat',...
+'IPS2_VisCent_8Mat', 'IPS2_VisPeri_8Mat'}
+ROIS1=[]
+for R= 1:length(MATS)
+     eval(['ROIS1=',MATS{R}]);
+    R
+for p= 1 : 64
+    % de NAN
+    
+    for t=1:150
+
+    eval(['s',MATS{R},'{p}(:,t)=DistaliseMM(ROIS1{1,p}(:,:,t),0);']);
+        
+   
+    
+    end
+    
+   eval(['MM_r',MATS{R},'{p}=corrcoef(s',MATS{R},'{p})']);
+end
+
+
+end
+

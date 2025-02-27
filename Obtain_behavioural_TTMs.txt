@@ -1,0 +1,30 @@
+% import data, just click in current folder; bring in as a cell array. 
+
+% exclude the first 5, then the last 1; 
+
+% REMOVE Nans/empty vals
+for n = 1:26
+    vec=TakenSuspenseRatingsRAW(:,n)
+TakenSuspenseRatings(:,n)=vec(~cellfun('isempty',vec))
+end
+% take out irrelvant data, not measured in fMRI, the index, the timepoints in which betas cannot be estimated. 
+TakenSuspenseRatings(:,1)=[]
+TakenSuspenseRatings(1:5,:)=[]
+TakenSuspenseRatings(151,:)=[]
+
+% get inverse of distance
+
+for n = 1:25
+    BehavMMs(:,:,n)=10.-squareform(pdist(cell2mat(TakenSuspenseRatings(:,n))));
+
+end
+
+BehavMMs_SD=std(BehavMMs,[],3)
+BehavMMs_AV=mean(BehavMMs,3)
+BehavMMs_CV=std(BehavMMs,[],3)./mean(BehavMMs,3)
+
+% get mean vector 
+VEC=cell2mat(TakenSuspenseRatings(3:146,:))
+imagesc(mean(VEC,2))
+VEC2=mean(cell2mat(TakenSuspenseRatings),2)
+
